@@ -159,6 +159,7 @@ common_files = files(
 	'Misc.cpp',
 	'Probability.cpp',
 	'InitSimulationConfig.cpp',
+	'common/ThreadPool.cpp',
 )
 
 resolve_vcs_tag = get_option('resolve_vcs_tag')
