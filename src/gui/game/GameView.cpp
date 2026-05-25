@@ -2389,6 +2389,33 @@ void GameView::OnDraw()
 					else
 						sampleInfo << " (unknown mode)";
 				}
+				else if (type == PT_SEED || type == PT_PLNT)
+				{
+					sampleInfo << c->ElementResolve(type, 0);
+					int water = (ctype >> 12) & 0xFF;
+					int colour = (ctype >> 6) & 0x3F;
+					int cyan   = (colour >> 4) & 3;
+					int magenta = (colour >> 2) & 3;
+					int yellow = colour & 3;
+					sampleInfo << " [w:" << water << " C:";
+					if (cyan == 0) sampleInfo << "--";
+					else if (cyan == 1) sampleInfo << "r-";
+					else if (cyan == 2) sampleInfo << "-d";
+					else sampleInfo << "rd";
+					sampleInfo << " M:";
+					if (magenta == 0) sampleInfo << "--";
+					else if (magenta == 1) sampleInfo << "r-";
+					else if (magenta == 2) sampleInfo << "-d";
+					else sampleInfo << "rd";
+					sampleInfo << " Y:";
+					if (yellow == 0) sampleInfo << "--";
+					else if (yellow == 1) sampleInfo << "r-";
+					else if (yellow == 2) sampleInfo << "-d";
+					else sampleInfo << "rd";
+					sampleInfo << "]";
+					if (type == PT_SEED && (ctype & 1))
+						sampleInfo << " (bred)";
+				}
 				else
 				{
 					sampleInfo << c->ElementResolve(type, ctype);
