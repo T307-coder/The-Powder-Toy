@@ -143,6 +143,7 @@ class PlaneAdapter: xExtent<Width>, yExtent<Height>
 
 public:
 	typename baseStorage<T>::type Base;
+	size_t stride = 0;  // cached width for fast index calculation
 
 	PlaneAdapter():
 		xExtent<Width>(0),
@@ -155,14 +156,18 @@ public:
 		xExtent<Width>(size.X),
 		yExtent<Height>(size.Y),
 		Base(getWidth() * getHeight(), std::forward<Args>(args)...)
-	{}
+	{
+		stride = getWidth();
+	}
 
 	template<typename... Args>
 	PlaneAdapter(Vec2<int> size, std::in_place_t, Args&&... args):
 		xExtent<Width>(size.X),
 		yExtent<Height>(size.Y),
 		Base(std::forward<Args>(args)...)
-	{}
+	{
+		stride = getWidth();
+	}
 
 	friend void swap(PlaneAdapter &first, PlaneAdapter &second) noexcept
 	{
@@ -170,6 +175,7 @@ public:
 		swap(static_cast<xExtent<Width> &>(first), static_cast<xExtent<Width> &>(second));
 		swap(static_cast<yExtent<Height> &>(first), static_cast<yExtent<Height> &>(second));
 		swap(first.Base, second.Base);
+		swap(first.stride, second.stride);
 	}
 
 	PlaneAdapter &operator =(PlaneAdapter other)
@@ -187,16 +193,17 @@ public:
 	{
 		xExtent<Width>::setExtent(size.X);
 		yExtent<Height>::setExtent(size.Y);
+		stride = getWidth();
 	}
 
 	iterator RowIterator(Vec2<int> p)
 	{
-		return std::begin(getBase()) + (p.X + p.Y * getWidth());
+		return std::begin(getBase()) + (p.X + p.Y * stride);
 	}
 
 	const_iterator RowIterator(Vec2<int> p) const
 	{
-		return std::begin(getBase()) + (p.X + p.Y * getWidth());
+		return std::begin(getBase()) + (p.X + p.Y * stride);
 	}
 
 	iterator begin()
@@ -233,21 +240,21 @@ public:
 	// Prefer this over operator[]({x, y}) in performance-critical loops.
 	value_type &at(int x, int y)
 	{
-		return getBase()[x + y * getWidth()];
+		return getBase()[x + y * stride];
 	}
 
 	value_type const &at(int x, int y) const
 	{
-		return getBase()[x + y * getWidth()];
+		return getBase()[x + y * stride];
 	}
 
 	value_type &operator[](Vec2<int> p)
 	{
-		return getBase()[p.X + p.Y * getWidth()];
+		return getBase()[p.X + p.Y * stride];
 	}
 
 	value_type const &operator[](Vec2<int> p) const
 	{
-		return getBase()[p.X + p.Y * getWidth()];
+		return getBase()[p.X + p.Y * stride];
 	}
 };
