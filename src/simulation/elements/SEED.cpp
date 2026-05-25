@@ -35,7 +35,7 @@ void Element::Element_SEED()
 	HeatConduct = 32;
 	Description = "Seeds. Put on sand and add water to grow a tree.";
 
-	Properties = TYPE_PART | PROP_NEUTPASS;
+	Properties = TYPE_PART | PROP_NEUTPASS | PROP_NOCTYPEDRAW;
 
 	LowPressure = IPL;
 	LowPressureTransition = NT;
